@@ -1,0 +1,6 @@
+{
+    "repo": "https://github.com/yourname/fracture.git",
+    "branch": "main",
+    "build_cmd": "./build.sh",
+    "google_drive_config_url": "https://drive.google.com/uc?export=download&id=your_file_id"
+  }
