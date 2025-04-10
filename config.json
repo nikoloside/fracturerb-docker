@@ -1,6 +1,7 @@
 {
-    "repo": "https://github.com/yourname/fracture.git",
-    "branch": "main",
-    "build_cmd": "./build.sh",
-    "google_drive_config_url": "https://drive.google.com/uc?export=download&id=your_file_id"
+    "gdrive_name": "fracture-gdrive",
+    "gdrive_bullet_path": "BulletData",
+    "gdrive_result_path": "SharedResults",
+    "local_bullet_path": "/mnt/bullet",
+    "local_result_path": "/mnt/results"
   }
