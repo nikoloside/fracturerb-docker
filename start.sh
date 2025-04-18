@@ -42,7 +42,6 @@ docker run \
   --mount "type=bind,src=$RESULT_LOCAL,dst=/app/results" \
   -v "$(pwd)/execFracture.sh:/app/execFracture.sh" \
   -v "$(pwd)/config.json:/app/config.json" \
-  --gpus all \
   --ipc=host \
   -dit \
   nikoloside/fracturerb-ubuntu:latest \
