@@ -13,29 +13,39 @@ else
   echo "Docker is already installed."
 fi
 
-# 拉镜像（或重建镜像）
-docker pull nikoloside/fracturerb-ubuntu:latest
-# 或 docker build -t fracture-runner .
+# Check if jq is installed
+if ! command -v jq &> /dev/null; then
+  echo "jq not found. Installing jq..."
+  apt-get update -y
+  apt-get install -y jq
+  echo "jq installed successfully."
+else
+  echo "jq is already installed."
+fi
 
-# 读取 config
+# Pull Docker Image
+docker pull nikoloside/fracturerb-ubuntu:latest
+
+# Configuration
 CONFIG_PATH=config.json
 BULLET_LOCAL=$(jq -r .local_bullet_path $CONFIG_PATH)
 RESULT_LOCAL=$(jq -r .local_result_path $CONFIG_PATH)
 
-# 执行 GDrive 挂载（背景运行，或你可以 fuse 到指定目录）
+# Setup GDrive Rclone Mounting
 chmod +x gdrive-mount.sh
 ./gdrive-mount.sh
 
-# 确保挂载目录存在
-mkdir -p $BULLET_LOCAL
-mkdir -p $RESULT_LOCAL
-
-touch "$BULLET_LOCAL/new_file.txt"
-
-# 执行主程序：挂载 GDrive 和运行脚本进容器
-docker run -it \
-  -v "$BULLET_LOCAL:/app/bullet" \
-  -v "$RESULT_LOCAL:/app/results" \
+# Create the container of docker
+docker run \
+  --name fracturerb \
+  --mount "type=bind,src=$BULLET_LOCAL,dst=/app/bullet" \
+  --mount "type=bind,src=$RESULT_LOCAL,dst=/app/results" \
   -v "$(pwd)/execFracture.sh:/app/execFracture.sh" \
+  -v "$(pwd)/config.json:/app/config.json" \
+  --gpus all \
+  --ipc=host \
+  -dit \
   nikoloside/fracturerb-ubuntu:latest \
-  bash -c "cd /Workspace/FractureRB-with-hyena/build && make"
+  /bin/bash
+
+docker exec -it fracturerb /bin/bash -c "cd /Workspace/FractureRB-with-hyena/build && make && export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib && cd /app/ && bash /app/execFracture.sh"

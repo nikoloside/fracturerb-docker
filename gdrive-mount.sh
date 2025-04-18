@@ -9,25 +9,26 @@ else
   echo "rclone is already installed."
 fi
 
-
 CONFIG=config.json
 
-# 读取路径
+# Setup the GDrive Path
 RCLONE_REMOTE=$(jq -r .gdrive_name $CONFIG)
 BULLET_REMOTE=$(jq -r .gdrive_bullet_path $CONFIG)
 RESULT_REMOTE=$(jq -r .gdrive_result_path $CONFIG)
 BULLET_LOCAL=$(jq -r .local_bullet_path $CONFIG)
 RESULT_LOCAL=$(jq -r .local_result_path $CONFIG)
 
-# 创建挂载目录
+# Create GDrive Path
 mkdir -p $BULLET_LOCAL $RESULT_LOCAL
 
-# 判断是否已经挂载，避免重复
-mountpoint -q $BULLET_LOCAL || \
-  rclone mount $RCLONE_REMOTE:$BULLET_REMOTE $BULLET_LOCAL --daemon --vfs-cache-mode writes
+# Check whtere it already exist, if so, unmount
+if mountpoint -q $BULLET_LOCAL; then
+  fusermount -u $BULLET_LOCAL
+fi
+if mountpoint -q $RESULT_LOCAL; then
+  fusermount -u $RESULT_LOCAL
+fi
 
-mountpoint -q $RESULT_LOCAL || \
-  rclone mount $RCLONE_REMOTE:$RESULT_REMOTE $RESULT_LOCAL --daemon --vfs-cache-mode writes
-
-touch "$BULLET_LOCAL/generated_file.txt"
-echo "This is a generated file." > "$BULLET_LOCAL/generated_file.txt"
+# Re-mount, make sure bullet folder cached
+rclone mount $RCLONE_REMOTE:$BULLET_REMOTE $BULLET_LOCAL --daemon --vfs-cache-mode full --allow-other
+rclone mount $RCLONE_REMOTE:$RESULT_REMOTE $RESULT_LOCAL --daemon --vfs-cache-mode writes
