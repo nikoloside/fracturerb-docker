@@ -1,10 +1,10 @@
 {
-    "host_name": "spc00",
-    "category_name": "abstract_animal",
-    "run_times": 20,
-    "gdrive_name": "fracture-gdrive",
-    "gdrive_bullet_path": "BulletData",
-    "gdrive_result_path": "SharedResults/spc00",
-    "local_bullet_path": "/mnt/bullet",
-    "local_result_path": "/mnt/results"
-  }
+  "host_name": "spc00",
+  "category_name": "abstract_animal",
+  "run_times": 20,
+  "gdrive_name": "fracture-gdrive",
+  "gdrive_bullet_path": "BulletData",
+  "gdrive_result_path": "SharedResults/spc00",
+  "local_bullet_path": "/mnt/bullet",
+  "local_result_path": "/mnt/results"
+}
